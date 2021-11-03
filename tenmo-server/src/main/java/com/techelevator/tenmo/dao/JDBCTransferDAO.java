@@ -13,11 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class JDBCTransferTemplate implements TransferDAO {
+public class JDBCTransferDAO implements TransferDAO {
 
     private JdbcTemplate jdbcTemplate;
+    private AccountDAO accountDAO;
 
-    @Override
+    @Override // I am unsure of my SQL --- i would like to pull it up in DB vis
     public List<Transfers> getAllTransfers(int id) {
     List<Transfers> transferList = new ArrayList<>();
     String sql = "SELECT t.*, u.username AS userFrom, v.username AS userTo FROM transfers t " +
@@ -34,7 +35,7 @@ public class JDBCTransferTemplate implements TransferDAO {
         return transferList;
     }
 
-    @Override
+    @Override   // I am unsure of my SQL --- i would like to pull it up in DB vis
     public Transfers getTransferById(int transactionID) throws TransferNotFoundException {
         Transfers transfer = new Transfers();
         String sql = "SELECT t.*, u.username AS userFrom, v.username AS userTo, ts.transfer_status_desc, tt.transfer_type_desc" +
@@ -54,16 +55,21 @@ public class JDBCTransferTemplate implements TransferDAO {
         return transfer;
     }
 
-    @Override
+    @Override 
     public String sendTransfer(int userFrom, int userTo, BigDecimal amount) {
         if (userFrom == userTo) {
-            return "You cannot send money to yourself";
-
-
-
-
+            return "You can not send money to your self.";
         }
-        return null;
+        if (amount.compareTo(accountDAO.getBalance(userFrom)) < 0 && amount.compareTo(new BigDecimal(0)) > 0) {
+            String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
+                    "VALUES (2, 2, ?, ?, ?)";
+            jdbcTemplate.update(sql, userFrom, userTo, amount);
+            accountDAO.addToBalance(amount, userTo);
+            accountDAO.subtractFromBalance(amount, userFrom);
+            return "Transfer complete";
+        } else {
+            return "Transfer failed";
+        }
     }
 
     @Override
@@ -83,12 +89,37 @@ public class JDBCTransferTemplate implements TransferDAO {
 
     @Override
     public List<Transfers> getPendingRequests(int userId) {
-        return null;
+        List<Transfers> output = new ArrayList<>();
+        String sql = "SELECT t.*, u.username AS userFrom, v.username AS userTo FROM transfers t " +
+                "JOIN accounts a ON t.account_from = a.account_id " +
+                "JOIN accounts b ON t.account_to = b.account_id " +
+                "JOIN users u ON a.user_id = u.user_id " +
+                "JOIN users v ON b.user_id = v.user_id " +
+                "WHERE transfer_status_id = 1 AND (account_from = ? OR account_to = ?)";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
+        while (results.next()) {
+            Transfers transfer = mapRowToTransfer(results);
+            output.add(transfer);
+        }
+        return output;
     }
 
     @Override
     public String updateTransferRequest(Transfers transfer, int statusId) {
-        return null;
+        if (statusId == 3) {
+            String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ?;";
+            jdbcTemplate.update(sql, statusId, transfer.getId());
+            return "Update successful";
+        }
+        if (!(accountDAO.getBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) == -1)) {
+            String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ?;";
+            jdbcTemplate.update(sql, statusId, transfer.getId());
+            accountDAO.addToBalance(transfer.getAmount(), transfer.getAccountTo());
+            accountDAO.subtractFromBalance(transfer.getAmount(), transfer.getAccountFrom());
+            return "Update successful";
+        } else {
+            return "Insufficient funds for transfer";
+        }
     }
 
 
