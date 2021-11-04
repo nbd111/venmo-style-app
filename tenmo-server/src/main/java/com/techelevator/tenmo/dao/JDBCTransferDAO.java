@@ -2,7 +2,6 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.TransferNotFoundException;
 import com.techelevator.tenmo.model.Transfers;
-import com.techelevator.tenmo.model.Transfers;
 import org.apache.logging.log4j.spi.Terminable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -111,7 +110,7 @@ public class JDBCTransferDAO implements TransferDAO {
             jdbcTemplate.update(sql, statusId, transfer.getId());
             return "Update successful";
         }
-        if (!(accountDAO.getBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) == -1)) {
+        if (!(accountDAO.getBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) < 0)) {
             String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ?;";
             jdbcTemplate.update(sql, statusId, transfer.getId());
             accountDAO.addToBalance(transfer.getAmount(), transfer.getAccountTo());
