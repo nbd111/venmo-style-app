@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TransferDAO {
 
-    public List<Transfers> getAllTransfers(int userID);
+    public List<Transfers> getAllTransfers();
 
     public Transfers getTransferById(int transactionID) throws TransferNotFoundException;
 
@@ -18,5 +18,5 @@ public interface TransferDAO {
 
     public List<Transfers> getPendingRequests(int userId);
 
-    public String updateTransferRequest(Transfers transfer, int statusId);
+    Transfers updateTransferRequest(Transfers transfer, int statusId);
 }

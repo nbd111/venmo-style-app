@@ -19,7 +19,7 @@ public class JDBCTransferDAO implements TransferDAO {
     private AccountDAO accountDAO;
 
     @Override // I am unsure of my SQL --- i would like to pull it up in DB vis
-    public List<Transfers> getAllTransfers(int id) {
+    public List<Transfers> getAllTransfers() {
     List<Transfers> transferList = new ArrayList<>();
     String sql = "SELECT t.*, u.username AS userFrom, v.username AS userTo FROM transfers t " +
             "JOIN accounts a ON t.account_from = a.account_id " +
@@ -27,7 +27,7 @@ public class JDBCTransferDAO implements TransferDAO {
             "JOIN users u ON a.user_id = u.user_id " +
             "JOIN users v ON b.user_id = v.user_id " +
             "WHERE a.user_id = ? OR b.user_id = ?";
-    SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id, id);
+    SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
     while(results.next()) {
         Transfers transfer = mapRowToTransfer(results);
         transferList.add(transfer);

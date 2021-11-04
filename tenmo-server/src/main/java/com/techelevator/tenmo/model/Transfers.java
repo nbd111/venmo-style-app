@@ -5,10 +5,15 @@ import java.math.BigDecimal;
 public class Transfers {
 
     private int id;
+
     private int transferTypeId;
+
     private int transferStatusId;
+
     private int accountFrom;
+
     private int accountTo;
+
     private BigDecimal amount;
 
     public Transfers(){ }
