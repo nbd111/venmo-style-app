@@ -55,7 +55,7 @@ public class JDBCTransferDAO implements TransferDAO {
         return transfer;
     }
 
-    @Override 
+    @Override
     public String sendTransfer(int userFrom, int userTo, BigDecimal amount) {
         if (userFrom == userTo) {
             return "You can not send money to your self.";
