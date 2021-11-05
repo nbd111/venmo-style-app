@@ -8,15 +8,16 @@ import java.util.List;
 
 public interface TransferDAO {
 
-    public List<Transfers> getAllTransfers();
+    List<Transfers> getAllTransfers();
 
-    public Transfers getTransferById(int transactionID) throws TransferNotFoundException;
+    Transfers getTransferById(int transactionID) throws TransferNotFoundException;
 
-    public String sendTransfer(int userFrom, int userTo, BigDecimal amount);
-
-    public String requestTransfer(int userFrom, int userTo, BigDecimal amount);
-
-    public List<Transfers> getPendingRequests(int userId);
-
-    Transfers updateTransferRequest(Transfers transfer, int statusId);
+    Transfers sendTransfer(Transfers transfers);
 }
+
+//    public String requestTransfer(int userFrom, int userTo, BigDecimal amount);
+//
+//    public List<Transfers> getPendingRequests(int userId);
+//
+//    Transfers updateTransferRequest(Transfers transfer, int statusId);
+//}

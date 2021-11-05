@@ -35,19 +35,23 @@ public class TransferController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path = "/transfers/userfrom/{id}/userto/{id}", method = RequestMethod.POST)
-    public Transfers sendTransfers(@Valid @RequestBody Transfers transfers) throws TransferNotFoundException {
-        return null;
+    public Transfers sendTransfer(@Valid @PathVariable("accountFrom") int userTo,@Valid @PathVariable("accountTo")
+            int userFrom, @Valid @RequestBody Transfers transfers) throws TransferNotFoundException {
+        return dao.sendTransfer(transfers);
+        }
+}
+
 //                dao.sendTransfer(transfers.getAccountFrom(), transfers.getAccountTo(),
 //                transfers.setAmount(transfers.getAmount());
-    }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(path = "/transfers/userfrom/{id}", method = RequestMethod.POST)
-    public Transfers requestTransfers(@Valid @RequestBody Transfers transfers) throws TransferNotFoundException {
-        return null;
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @RequestMapping(path = "/transfers/userfrom/{id}", method = RequestMethod.POST)
+//    public Transfers requestTransfers(@Valid @RequestBody Transfers transfers) throws TransferNotFoundException {
+//        return null;
+
 //                dao.requestTransfer(transfers.getAccountFrom(), transfers.getAccountTo(),
 //                        transfers.setAmount(transfers.getAmount());)
-    }
+
 //    @RequestMapping(path = "/transfers/{id}", method = RequestMethod.PUT)
 //    public Transfers updateTransferRequest(@Valid @RequestBody Transfers transfers, @PathVariable int id)
 //            throws TransferNotFoundException {
@@ -55,4 +59,3 @@ public class TransferController {
 //        return dao.updateTransferRequest(transfers,id);
 //    }
 
-}

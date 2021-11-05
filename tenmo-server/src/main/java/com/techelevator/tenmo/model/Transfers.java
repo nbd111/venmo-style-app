@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.model;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 public class Transfers {
@@ -68,7 +69,7 @@ public class Transfers {
         this.accountTo = accountTo;
     }
 
-    public BigDecimal getAmount() {
+    public BigDecimal getAmount(@Valid int userTo) {
         return amount;
     }
 
