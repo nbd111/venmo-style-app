@@ -12,7 +12,11 @@ import java.math.BigDecimal;
 public class JDBCAccountDAO implements AccountDAO {
 
     private JdbcTemplate jdbcTemplate;
-
+// data source DAO day 7
+//
+//    public JdbcDepartmentDao(DataSource dataSource) { // connection string
+//        this.jdbcTemplate = new JdbcTemplate(dataSource);
+//    }
     public JDBCAccountDAO() {}
 
     public JDBCAccountDAO(JdbcTemplate jdbcTemplate) {
@@ -21,13 +25,12 @@ public class JDBCAccountDAO implements AccountDAO {
 
     @Override
     public BigDecimal getBalance(int userId) {
-        String sql = "SELECT balance FROM accounts WHERE user_id = ? ";
-        SqlRowSet results = null;
+        String sql = "SELECT balance FROM accounts WHERE user_id = ?; ";
         BigDecimal balance = null;
         try {
-            results = jdbcTemplate.queryForRowSet(sql, userId);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
             if (results.next()) {
-                balance = results.getBigDecimal(balance.compareTo(balance));
+                balance = results.getBigDecimal("balance");
             }
         } catch (DataAccessException e) {
             System.out.println("Error retrieving data");

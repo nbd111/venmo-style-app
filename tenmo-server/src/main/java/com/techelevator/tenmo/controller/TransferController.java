@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@PreAuthorize("isAuthenticated")
+//@PreAuthorize("isAuthenticated")
 public class TransferController {
 
     // I am unsure of what the URL is for this /transfers is my assumption at this time

@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 
 @RestController
-@PreAuthorize("isAuthenticated")
+//@PreAuthorize("isAuthenticated") // roles
 public class AccountController {
 
 
@@ -27,7 +28,7 @@ public class AccountController {
     }
 
     @RequestMapping(path = "balance/{id}", method = RequestMethod.GET)
-    public BigDecimal getBalance(@PathVariable int id) {
+    public BigDecimal getBalance(@Valid @PathVariable int id) {
         BigDecimal balance = accountDAO.getBalance(id);
         return balance;
     }
