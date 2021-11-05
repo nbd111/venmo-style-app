@@ -4,9 +4,11 @@ import com.techelevator.tenmo.model.Accounts;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class JDBCAccountDAO implements AccountDAO {
 
     private JdbcTemplate jdbcTemplate;
