@@ -99,24 +99,25 @@ private RestTemplate restTemplate = new RestTemplate();
 		
 	}
 
-	private Transfers sendBucks(String newTransfer) {
+	private Transfers sendBucks() {
 		// TODO Auto-generated method stub
-		AccountService as = new AccountService(API_BASE_URL, currentUser);
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		HttpEntity<Transfers> httpEntity = new HttpEntity<>(transfers, headers);
-
-		String url = API_BASE_URL + "transfers/";
-		Transfers createdTransfer = null;
-		try{
-			createdTransfer = restTemplate.patchForObject(url,httpEntity,Transfers.class);
-		}catch (RestClientResponseException e){
-			System.out.println(e.getRawStatusCode() + " " + e.getStatusText());
-		}catch (ResourceAccessException e) {
-			System.out.println("Server is unreachable");
-		}
-		return createdTransfer;
+////		AccountService as = new AccountService(API_BASE_URL, currentUser);
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//		HttpEntity<Transfers> httpEntity = new HttpEntity<>(transfers, headers);
+//
+//		String url = API_BASE_URL + "transfers/";
+//		Transfers createdTransfer = null;
+//		try{
+//			createdTransfer = restTemplate.patchForObject(url,httpEntity,Transfers.class);
+//		}catch (RestClientResponseException e){
+//			System.out.println(e.getRawStatusCode() + " " + e.getStatusText());
+//		}catch (ResourceAccessException e) {
+//			System.out.println("Server is unreachable");
+//		}
+		return null;
 
 	}
 
