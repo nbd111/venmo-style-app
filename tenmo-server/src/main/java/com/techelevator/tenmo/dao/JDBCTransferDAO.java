@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.List;
 public class JDBCTransferDAO implements TransferDAO {
 
     private JdbcTemplate jdbcTemplate;
-    private AccountDAO accountDAO;
+    public JDBCTransferDAO(DataSource dataSource){this.jdbcTemplate = new JdbcTemplate(dataSource);}
+
 
     public static List<Transfers> transfersList = new ArrayList<>();
+
 
     @Override // I am unsure of my SQL --- i would like to pull it up in DB vis
     public List<Transfers> getAllTransfers() {
@@ -37,99 +40,26 @@ public class JDBCTransferDAO implements TransferDAO {
 
     @Override   // I am unsure of my SQL --- i would like to pull it up in DB vis
     public Transfers getTransferById(int transactionID) throws TransferNotFoundException {
-        Transfers transfer = new Transfers();
-        String sql = "SELECT t.*, u.username AS userFrom, v.username AS userTo, ts.transfer_status_desc, tt.transfer_type_desc" +
-                     "FROM transfers t " +
-                     "JOIN accounts a ON t.account_from = a.account_id " +
-                     "JOIN accounts b ON t.account_from = b.account_id " +
-                     "JOIN users u ON a.user_id = b.account_id " +
-                     "JOIN transfer_statuses ts ON t.transfer_status_id = ts.transfer_status_id " +
-                     "JOIN transfer_types tt ON t.transfer_type_id = tt.transfer_type_id " +
-                     "WHERE t.transfer_id = ?";
+        Transfers transfer = new Transfers(); // Transfers transfers = null?
+        String sql = "SELECT *\n" +
+                "FROM transfers\n" +
+                "WHERE transfer_id =?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transactionID);
-        if (results.next()) {
+        if (results.next()) {     //if is correct because we only expect one row
             transfer = mapRowToTransfer(results);
-        } else {
-            throw new TransferNotFoundException();
         }
         return transfer;
     }
 
     @Override
-    public Transfers sendTransfer(Transfers transfers) {
-        transfers.setAccountFrom(transfers.getId());
-        transfers.setAccountTo(transfers.getId());
-        transfersList.add(transfers);
-        return transfers;
+    public Transfers sendTransfer(Transfers newTransfers ,int id) throws TransferNotFoundException {
+        String sql ="INSERT INTO transfers (account_to, account_from, amount)" +
+                "VALUES (?,?,?) RETURNING transfer_id;";
+        int newId = jdbcTemplate.queryForObject(sql,Integer.class, newTransfers.getAccountTo(),
+            newTransfers.getAccountFrom(), newTransfers.getAmount());
+
+        return getTransferById(newId);
     }
-
-
-//    @Override
-//    public Transfers sendTransfer(Transfers transfers BigDecimal amount) {
-//        if (userFrom == userTo) {
-//            return null;
-//        }
-//        if (amount.compareTo(accountDAO.getBalance(userFrom)) < 0 && amount.compareTo(new BigDecimal(0)) > 0) {
-//            String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-//                    "VALUES (2, 2, ?, ?, ?)";
-//            jdbcTemplate.update(sql, userFrom, userTo, amount);
-//            accountDAO.addToBalance(amount, userTo);
-//            accountDAO.subtractFromBalance(amount, userFrom);
-//            return null;
-//        }
-//        return null;
-//    }
-
-//    @Override
-//    public String requestTransfer(int userFrom, int userTo, BigDecimal amount) {
-//        if (userFrom == userTo) {
-//            return "You cannot send money to yourself!";
-//        }
-//        if (amount.compareTo(new BigDecimal(0))== 1) {
-//            String sql = "INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) " +
-//                         "VALUES (1, 1, ?, ?, ?)";
-//            jdbcTemplate.update(sql, userFrom, userTo, amount);
-//            return "Request successfully sent";
-//        } else {
-//            return "There was an error sending the request";
-//        }
-//    }
-//
-//    @Override
-//    public List<Transfers> getPendingRequests(int userId) {
-//        List<Transfers> output = new ArrayList<>();
-//        String sql = "SELECT t.*, u.username AS userFrom, v.username AS userTo FROM transfers t " +
-//                "JOIN accounts a ON t.account_from = a.account_id " +
-//                "JOIN accounts b ON t.account_to = b.account_id " +
-//                "JOIN users u ON a.user_id = u.user_id " +
-//                "JOIN users v ON b.user_id = v.user_id " +
-//                "WHERE transfer_status_id = 1 AND (account_from = ? OR account_to = ?)";
-//        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId, userId);
-//        while (results.next()) {
-//            Transfers transfer = mapRowToTransfer(results);
-//            output.add(transfer);
-//        }
-//        return output;
-//    }
-
-//    @Override
-//    public String updateTransferRequest(Transfers transfer, int statusId) {
-//        if (statusId == 3) {
-//            String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ?;";
-//            jdbcTemplate.update(sql, statusId, transfer.getId());
-//            return "Update successful";
-//        }
-//        if (!(accountDAO.getBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) < 0)) {
-//            String sql = "UPDATE transfers SET transfer_status_id = ? WHERE transfer_id = ?;";
-//            jdbcTemplate.update(sql, statusId, transfer.getId());
-//            accountDAO.addToBalance(transfer.getAmount(), transfer.getAccountTo());
-//            accountDAO.subtractFromBalance(transfer.getAmount(), transfer.getAccountFrom());
-//            return "Update successful";
-//        } else {
-//            return "Insufficient funds for transfer";
-//        }
-//    }
-
 
     // Helper Method
     private Transfers mapRowToTransfer(SqlRowSet results) {

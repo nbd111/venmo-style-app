@@ -12,12 +12,6 @@ import java.math.BigDecimal;
 public class JDBCAccountDAO implements AccountDAO {
 
     private JdbcTemplate jdbcTemplate;
-// data source DAO day 7
-//
-//    public JdbcDepartmentDao(DataSource dataSource) { // connection string
-//        this.jdbcTemplate = new JdbcTemplate(dataSource);
-//    }
-    public JDBCAccountDAO() {}
 
     public JDBCAccountDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

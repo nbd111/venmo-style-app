@@ -12,7 +12,7 @@ public interface TransferDAO {
 
     Transfers getTransferById(int transactionID) throws TransferNotFoundException;
 
-    Transfers sendTransfer(Transfers transfers);
+    Transfers sendTransfer(Transfers transfers, int id) throws TransferNotFoundException;
 }
 
 //    public String requestTransfer(int userFrom, int userTo, BigDecimal amount);

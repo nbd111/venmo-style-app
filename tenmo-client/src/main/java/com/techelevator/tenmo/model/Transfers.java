@@ -1,10 +1,8 @@
 package com.techelevator.tenmo.model;
 
-import javax.validation.Valid;
 import java.math.BigDecimal;
 
 public class Transfers {
-
     private int id;
 
     private int transferTypeId;
@@ -20,12 +18,12 @@ public class Transfers {
     public Transfers(){ }
 
     public Transfers(int id, int transferTypeId, int transferStatusId, int accountFrom, int accountTo,BigDecimal amount){
-    this.id =id;
-    this.transferTypeId = transferTypeId;
-    this.transferStatusId = transferStatusId;
-    this.accountFrom = accountFrom;
-    this.accountTo = accountTo;
-    this.amount = amount;
+        this.id =id;
+        this.transferTypeId = transferTypeId;
+        this.transferStatusId = transferStatusId;
+        this.accountFrom = accountFrom;
+        this.accountTo = accountTo;
+        this.amount = amount;
 
     }
 

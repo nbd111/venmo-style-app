@@ -1,15 +1,27 @@
 package com.techelevator.tenmo;
 
+
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
 import com.techelevator.view.ConsoleService;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.RestTemplate;
+
+import java.awt.*;
+
 
 public class App {
 
 private static final String API_BASE_URL = "http://localhost:8080/";
+private RestTemplate restTemplate = new RestTemplate();
     
     private static final String MENU_OPTION_EXIT = "Exit";
     private static final String LOGIN_MENU_OPTION_REGISTER = "Register";
@@ -87,9 +99,25 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		
 	}
 
-	private void sendBucks() {
+	private Transfers sendBucks(String newTransfer) {
 		// TODO Auto-generated method stub
-		
+		AccountService as = new AccountService(API_BASE_URL, currentUser);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<Transfers> httpEntity = new HttpEntity<>(transfers, headers);
+
+		String url = API_BASE_URL + "transfers/";
+		Transfers createdTransfer = null;
+		try{
+			createdTransfer = restTemplate.patchForObject(url,httpEntity,Transfers.class);
+		}catch (RestClientResponseException e){
+			System.out.println(e.getRawStatusCode() + " " + e.getStatusText());
+		}catch (ResourceAccessException e) {
+			System.out.println("Server is unreachable");
+		}
+		return createdTransfer;
+
 	}
 
 	private void requestBucks() {

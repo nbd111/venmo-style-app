@@ -34,10 +34,9 @@ public class TransferController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(path = "/transfers/userfrom/{id}/userto/{id}", method = RequestMethod.POST)
-    public Transfers sendTransfer(@Valid @PathVariable("accountFrom") int userTo,@Valid @PathVariable("accountTo")
-            int userFrom, @Valid @RequestBody Transfers transfers) throws TransferNotFoundException {
-        return dao.sendTransfer(transfers);
+    @RequestMapping(path = "/transfers/accounts/{id}", method = RequestMethod.POST)
+    public Transfers sendTransfer(@PathVariable int id, @RequestBody Transfers transfers) throws TransferNotFoundException {
+        return dao.sendTransfer(transfers,id);
         }
 }
 
