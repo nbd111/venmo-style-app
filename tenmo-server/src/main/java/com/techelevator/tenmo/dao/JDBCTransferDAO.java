@@ -52,14 +52,27 @@ public class JDBCTransferDAO implements TransferDAO {
     }
 
     @Override
-    public Transfers sendTransfer(Transfers newTransfers ,int id) throws TransferNotFoundException {
-        String sql ="INSERT INTO transfers (account_to, account_from, amount)" +
-                "VALUES (?,?,?) RETURNING transfer_id;";
-        int newId = jdbcTemplate.queryForObject(sql,Integer.class, newTransfers.getAccountTo(),
+    public Transfers sendTransfer(Transfers newTransfers ) throws TransferNotFoundException {
+        String sql2 ="(SELECT account_id FROM accounts WHERE user_id = ?)";
+        String sql ="INSERT INTO transfers (transfer_type_id, transfer_status_id, account_to, account_from, amount)" +
+                "VALUES (2,2,"+sql2+","+sql2+",?) RETURNING transfer_id;";
+        Integer newId = jdbcTemplate.queryForObject(sql, Integer.class,newTransfers.getAccountTo(),
             newTransfers.getAccountFrom(), newTransfers.getAmount());
-
+        if(newId == null){
+            return null;
+        }
         return getTransferById(newId);
     }
+
+    @Override
+    public Transfers updateFromAccount(int id, Transfers transfer) {
+            String sqlUpdateBalance = "UPDATE accounts SET balance = balance - ? "
+                    + "WHERE user_id = ? ";
+
+            return null; //jdbcTemplate.update(sqlUpdateBalance, transfer.getAmount(),id());
+
+        }
+
 
     // Helper Method
     private Transfers mapRowToTransfer(SqlRowSet results) {

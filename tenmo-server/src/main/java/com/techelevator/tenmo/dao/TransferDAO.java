@@ -12,12 +12,15 @@ public interface TransferDAO {
 
     Transfers getTransferById(int transactionID) throws TransferNotFoundException;
 
-    Transfers sendTransfer(Transfers transfers, int id) throws TransferNotFoundException;
+    Transfers sendTransfer(Transfers transfers) throws TransferNotFoundException;
+
+
+    Transfers updateFromAccount(int id, Transfers transfer);
 }
 
 //    public String requestTransfer(int userFrom, int userTo, BigDecimal amount);
 //
 //    public List<Transfers> getPendingRequests(int userId);
 //
-//    Transfers updateTransferRequest(Transfers transfer, int statusId);
+
 //}

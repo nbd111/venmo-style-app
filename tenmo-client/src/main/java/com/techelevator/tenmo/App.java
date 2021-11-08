@@ -7,6 +7,7 @@ import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
+import com.techelevator.tenmo.services.TransferService;
 import com.techelevator.view.ConsoleService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -16,12 +17,15 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
+import java.math.BigDecimal;
 
 
 public class App {
 
+
 private static final String API_BASE_URL = "http://localhost:8080/";
 private RestTemplate restTemplate = new RestTemplate();
+//private final TransferService transferService = new TransferService(); wants a constructor which causes many errors
     
     private static final String MENU_OPTION_EXIT = "Exit";
     private static final String LOGIN_MENU_OPTION_REGISTER = "Register";
@@ -38,15 +42,19 @@ private RestTemplate restTemplate = new RestTemplate();
     private AuthenticatedUser currentUser;
     private ConsoleService console;
     private AuthenticationService authenticationService;
+    private TransferService transferService;
+
 
     public static void main(String[] args) {
-    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
+    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL),
+				new TransferService());
     	app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService) {
+    public App(ConsoleService console, AuthenticationService authenticationService, TransferService transferService) {
 		this.console = console;
 		this.authenticationService = authenticationService;
+		this.transferService = transferService;
 	}
 
 	public void run() {
@@ -99,25 +107,19 @@ private RestTemplate restTemplate = new RestTemplate();
 		
 	}
 
-	private Transfers sendBucks() {
+	private void sendBucks() {
 		// TODO Auto-generated method stub
-
-////		AccountService as = new AccountService(API_BASE_URL, currentUser);
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//		HttpEntity<Transfers> httpEntity = new HttpEntity<>(transfers, headers);
-//
-//		String url = API_BASE_URL + "transfers/";
-//		Transfers createdTransfer = null;
-//		try{
-//			createdTransfer = restTemplate.patchForObject(url,httpEntity,Transfers.class);
-//		}catch (RestClientResponseException e){
-//			System.out.println(e.getRawStatusCode() + " " + e.getStatusText());
-//		}catch (ResourceAccessException e) {
-//			System.out.println("Server is unreachable");
-//		}
-		return null;
+		TransferService ts = new TransferService(API_BASE_URL, currentUser);
+		int recipientId = console.getUserInputInteger("Please enter userId: ");
+		if (recipientId != 0) {
+			int amount = console.getUserInputInteger("Please enter amount: ");
+			if (amount > 0) ;
+			Transfers transfer = new Transfers();
+			transfer.setAccountFrom(currentUser.getUser().getId());
+			transfer.setAccountTo(recipientId);
+			transfer.setAmount(BigDecimal.valueOf(amount));
+			ts.transfer(transfer).setAccountTo(recipientId);
+		}
 
 	}
 
