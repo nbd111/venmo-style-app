@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.controller;
 
+import com.techelevator.tenmo.dao.AccountDAO;
 import com.techelevator.tenmo.dao.JDBCTransferDAO;
 import com.techelevator.tenmo.dao.TransferDAO;
 import com.techelevator.tenmo.model.TransferNotFoundException;
@@ -13,13 +14,15 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-//@PreAuthorize("isAuthenticated")
+@PreAuthorize("isAuthenticated")
 public class TransferController {
 
     // I am unsure of what the URL is for this /transfers is my assumption at this time
     private JDBCTransferDAO dao;
+    public AccountDAO accountDAO;
+    public TransferController(JDBCTransferDAO dao, AccountDAO accountdao) {
 
-    public TransferController(JDBCTransferDAO dao) {
+        this.accountDAO = accountdao;
         this.dao = dao;
     }
 
@@ -37,7 +40,10 @@ public class TransferController {
     @RequestMapping(path = "/transfers", method = RequestMethod.POST)
     public Transfers sendTransfer(@RequestBody Transfers transfers) throws TransferNotFoundException {
 
-        return dao.sendTransfer(transfers);
+        Transfers otherTransfer = dao.sendTransfer(transfers);
+        accountDAO.subtractFromBalance(transfers.getAmount(),transfers.getAccountFrom());
+        accountDAO.addToBalance();
+        return otherTransfer;
         }
 }
 

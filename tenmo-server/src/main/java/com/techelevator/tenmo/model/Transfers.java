@@ -1,6 +1,9 @@
 package com.techelevator.tenmo.model;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 public class Transfers {
@@ -68,7 +71,7 @@ public class Transfers {
     public void setAccountTo(int accountTo) {
         this.accountTo = accountTo;
     }
-
+    @Positive
     public BigDecimal getAmount() {
         return amount;
     }
